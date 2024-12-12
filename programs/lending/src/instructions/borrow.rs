@@ -41,7 +41,8 @@ pub struct Borrow<'info> {
     pub user_account: Account<'info, User>,
 
     #[account(
-        mut,
+        init_if_needed,
+        payer = signer,
         associated_token::mint = mint,
         associated_token::authority = signer,
         associated_token::token_program = token_program,
@@ -104,7 +105,7 @@ pub fn borrow_handler(
     }
 
     if to_borrow_value > collateralized_value * bank_account.max_ltv {
-        return Err(ErrorCode::NotEnoughDepositedAssets.into());
+        return Err(ErrorCode::NotEnoughLiquidationAssets.into());
     }
 
     let program = ctx.accounts.token_program.to_account_info();

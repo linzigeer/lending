@@ -1,6 +1,6 @@
 use crate::share_op::ShareOp;
 use std::f64::consts::E;
-
+use anchor_lang::prelude::{Clock, SolanaSysvar};
 ///保留n位小数点
 pub fn round_to_n_decimal(value: f64, n_decimals: u8) -> f64 {
     let base = 10.0f64.powf(n_decimals as f64);
@@ -32,16 +32,18 @@ pub fn calc_new_total_shares(
 }
 
 ///利息应得计算
-pub fn calc_accrued_interest(base: u64, interest: f64, last_time: i64, n_decimals: u8) -> f64 {
+pub fn calc_accrued_interest(base: u64, interest: f64, last_update: i64, n_decimals: u8) -> f64 {
+    let current_time = Clock::get().unwrap().unix_timestamp;
+    let lasts_time = current_time - last_update;
     round_to_n_decimal(
-        base as f64 * E.powf(interest * last_time as f64),
+        base as f64 * E.powf(interest * lasts_time as f64),
         n_decimals,
     )
 }
 
 ///计算本金+利息
-pub fn calc_base_sum_interest(base: u64, interest: f64, last_time: i64, n_decimals: u8) -> f64 {
-    let interest = calc_accrued_interest(base, interest, last_time, n_decimals);
+pub fn calc_base_sum_interest(base: u64, interest: f64, last_update: i64, n_decimals: u8) -> f64 {
+    let interest = calc_accrued_interest(base, interest, last_update, n_decimals);
 
     base as f64 + interest
 }

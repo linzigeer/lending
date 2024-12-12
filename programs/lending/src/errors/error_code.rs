@@ -17,7 +17,7 @@ pub enum ErrorCode {
     UnsupportedMintKind,
 
     #[msg("Not enough deposited assets!")]
-    NotEnoughDepositedAssets,
+    NotEnoughLiquidationAssets,
 
     #[msg("No need to repay!")]
     NoNeedToRepay,
@@ -27,4 +27,7 @@ pub enum ErrorCode {
 
     #[msg("Borrow not allowed!")]
     BorrowNotAllowed,
+
+    #[msg("Not enough balance!")]
+    NotEnoughBalance,
 }
